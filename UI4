@@ -592,7 +592,7 @@ end
 
 -- keys from the discord bot (/generatekey) get checked on the 22 hub key server.
 -- pass Game = "practicalbasketball" (etc) to KeySystem to use it, or Key = "..." for the old fixed key
-local KEY_SERVER = "https://22hub-keys.bustyfritz.workers.dev"
+local KEY_SERVER = "https://api.22hub.xyz"
 local function serverCheck(gameId, key, url)
     local uid = Players.LocalPlayer and Players.LocalPlayer.UserId or 0
     local q = ("%s/check?game=%s&key=%s&uid=%s"):format(url, HttpService:UrlEncode(gameId), HttpService:UrlEncode(key), tostring(uid))
