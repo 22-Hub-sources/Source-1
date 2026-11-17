@@ -592,14 +592,17 @@ end
 
 -- keys from the discord bot (/generatekey) get checked on the 22 hub key server.
 -- pass Game = "practicalbasketball" (etc) to KeySystem to use it, or Key = "..." for the old fixed key
-local KEY_SERVER = "https://api.22hub.xyz"
+local KEY_SERVER = "https://22hub-keys.bustyfritz.workers.dev"
 local function serverCheck(gameId, key, url)
     local uid = Players.LocalPlayer and Players.LocalPlayer.UserId or 0
     local q = ("%s/check?game=%s&key=%s&uid=%s"):format(url, HttpService:UrlEncode(gameId), HttpService:UrlEncode(key), tostring(uid))
     local ok, body = pcall(function() return game:HttpGet(q) end)
     if not ok or type(body) ~= "string" then return false, "Couldn't reach the key server. Try again." end
     local ok2, data = pcall(function() return HttpService:JSONDecode(body) end)
-    if not ok2 or type(data) ~= "table" then return false, "Key server sent something weird. Try again." end
+    if not ok2 or type(data) ~= "table" then
+        local code = body:match("[Ee]rror code:? ?(%d+)") or body:match("Error (%d%d%d%d)")
+        return false, "Key server error" .. (code and (" " .. code) or (": " .. body:gsub("%s+", " "):sub(1, 40))) .. ". Try again in a minute"
+    end
     if data.valid then return true, tonumber(data.expires) end
     local why = tostring(data.reason or "wrong key")
     return false, why:sub(1, 1):upper() .. why:sub(2)
